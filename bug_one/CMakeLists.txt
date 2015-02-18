@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -94,6 +95,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+#  ${bug_one_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -103,16 +105,16 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-# add_executable(bug_one_node src/bug_one_node.cpp)
+add_executable(bug_one_node src/bug_one_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(bug_one_node bug_one_generate_messages_cpp)
+add_dependencies(bug_one_node bug_one_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(bug_one_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(bug_one_node
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
