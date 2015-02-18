@@ -10,6 +10,7 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/LaserScan.h>
 #include <tf/transform_broadcaster.h>
+#include <cmath>
 
 //a small struct to hold my position.
 typedef struct Location {
@@ -29,8 +30,10 @@ class BugRobot {
 	protected:
 		void poseCallBack(const nav_msgs::Odometry::ConstPtr&);
 		void laserScanCallBack(const sensor_msgs::LaserScan::ConstPtr&);
-
+		void moveBug();
 	private:
+		double calcBearing();
+
 		double x_dest_, y_dest_;
 		ros::Publisher cmd_vel_pub_;
 		ros::Subscriber base_truth_sub_;
@@ -71,18 +74,73 @@ void BugRobot::poseCallBack(const nav_msgs::Odometry::ConstPtr& msg) {
 
 void BugRobot::laserScanCallBack(const sensor_msgs::LaserScan::ConstPtr& msg) {}
 
+double BugRobot::calcBearing() {
+	return atan2(y_dest_ - current_pos_.y, x_dest_ - current_pos_.x);
+}
+
+void BugRobot::moveBug() {
+	geometry_msgs::Twist msg;
+	double forward_offset = 0.25;
+	double bearing_offset = 0.1;
+	
+	//calculate bearing
+	double angle_to_dest = calcBearing();
+
+	std::cout << angle_to_dest << " " << current_pos_.bearing << std::endl;
+	
+	if( (current_pos_.x != x_dest_) && (current_pos_.y != y_dest_) ) {
+		if(current_pos_.bearing > angle_to_dest) {
+			msg.angular.z = -bearing_offset;
+		}
+		else {
+			msg.angular.z = bearing_offset;
+		}
+		
+		msg.linear.x = forward_offset;
+		
+		cmd_vel_pub_.publish(msg);
+	}
+}
+
 void BugRobot::run() {
 	ros::Rate rate(30);
 
 	while(ros::ok()){
 
-		std::cerr << current_pos_.x << " ";
-		std::cerr << current_pos_.y << " ";
-		std::cerr << current_pos_.bearing << std::endl;
-		
+		moveBug();
+
 		ros::spinOnce();
 		rate.sleep();
 	}
 }
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

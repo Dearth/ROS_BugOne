@@ -14,9 +14,8 @@ int main(int argc, char **argv)
 	/// Every ros node needs a node handle, similar to your usual  file handle.
 	ros::NodeHandle nh_;
 	/// Publisher object that decides what kind of topic to publish and how fast.
-	double dest_x, dest_y;
 	
-	BugRobot bug(nh_, 1, 2);
+	BugRobot bug(nh_, 0, 0);
 	bug.run();
 	return 0;
 }
